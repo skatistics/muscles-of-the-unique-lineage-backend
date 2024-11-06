@@ -4,6 +4,7 @@ import workoutsRouter from "../src/routes/workouts.js";
 import usersRouter from "../src/routes/users.js";
 import groupsRouter from "../src/routes/groups.js";
 import membershipRouter from "../src/routes/memberships.js";
+import cors from "cors";
 
 const PORT = process.env.PORT || 3500;
 const DBUSERNAME = process.env.DB_USERNAME;
@@ -16,6 +17,7 @@ const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cors());
 
 app.use("/api/workouts", workoutsRouter);
 app.use("/api/users", usersRouter);
