@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
     res.status(200).json(users);
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ message: error.message });
+    res.status(500).json(error);
   }
 });
 
@@ -24,30 +24,41 @@ router.get("/:id", async (req, res) => {
 
   try {
     const selectedUser = await User.findById(id);
+    if (!selectedUser) {
+      return res.status(400).json({ message: `cannot find id by ${id}` });
+    }
     res.send(selectedUser);
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ message: error.message });
+    res.status(500).json(error);
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const selectedUser = await User.findByIdAndUpdate(id, req.body);
+    if (!selectedUser) {
+      return res.status(404).json({ message: `cannot find ID by ${id}` });
+    }
+    const updatedUser = await User.findById(id);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
-  const selectedUser = await User.findByIdAndDelete(id);
-  if (!selectedUser) {
-    return res.status(400).json({ message: `cannot find id by ${id}` });
+  try {
+    const selectedUser = await User.findByIdAndDelete(id);
+    if (!selectedUser) {
+      return res.status(400).json({ message: `cannot find id by ${id}` });
+    }
+    res.status(200).json(`DELETED: ${id}`);
+  } catch (error) {
+    res.status(500).json(error);
   }
-  res.status(200).json(`DELETED: ${id}`);
-});
-
-router.put("/:id", async (req, res) => {
-  const { id } = req.params;
-  const selectedUser = await User.findByIdAndUpdate(id, req.body);
-  if (!selectedUser) {
-    return res.status(404).json({ message: `cannot find ID by ${id}` });
-  }
-  const updatedUser = await User.findById(id);
-  res.status(200).json(updatedUser);
 });
 
 export default router;
