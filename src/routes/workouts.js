@@ -1,125 +1,67 @@
 import { Router } from "express";
+import Workout from "../../models/workoutModel.js";
 
 const router = Router();
 
-const workouts = [
-  {
-    id: 1,
-    name: "push up",
-    muscleGroup: "chest",
-    workoutType: "upper",
-    intensity: 1,
-  },
-  {
-    id: 2,
-    name: "pull ups",
-    muscleGroup: "chest",
-    workoutType: "upper",
-    intensity: 1,
-  },
-  {
-    id: 3,
-    name: "sit ups",
-    muscleGroup: "core",
-    workoutType: "core",
-    intensity: 3,
-  },
-  {
-    id: 4,
-    name: "squats",
-    muscleGroup: "hamstrings",
-    workoutType: "lower",
-    intensity: 1,
-  },
-  {
-    id: 5,
-    name: "plank",
-    muscleGroup: "core",
-    workoutType: "upper",
-    intensity: 4,
-  },
-];
-
-router.get("/", (req, res) => {
-  res.send(workouts);
+router.post("/", async (req, res) => {
+  try {
+    const workout = await Workout.create(req.body);
+    res.status(200).json(workout);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
-router.get("/:id", (req, res) => {
-  const parsedId = parseInt(req.params.id);
-
-  if (isNaN(parsedId)) {
-    return res.sendStatus(400);
+router.get("/", async (req, res) => {
+  try {
+    const workoutRes = await Workout.find({});
+    res.status(200).json(workoutRes);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
   }
-
-  const foundWorkout = workouts.find((workout) => workout.id === parsedId);
-
-  if (!foundWorkout) {
-    return res.sendStatus(404);
-  }
-
-  res.status(200).send(foundWorkout);
 });
 
-router.post("/", (req, res) => {
-  console.log(req.body);
-  const newWorkout = { id: workouts.length + 1, ...req.body };
-  workouts.push(newWorkout);
-  res.status(200).send("success");
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const workout = await Workout.findById(id);
+    if (!workout) {
+      return res.status(404).json({ message: `Cannot find id: ${id}` });
+    }
+    res.status(200).json(workout);
+  } catch (error) {
+    res.status(500).json({ message: `Please enter valid ${id}` });
+  }
 });
 
-router.put("/:id", (req, res) => {
-  const parsedId = parseInt(req.params.id);
-  if (isNaN(parsedId)) {
-    return res.sendStatus(400);
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const selectedWorkout = await Workout.findByIdAndUpdate(id, req.body);
+    if (!selectedWorkout) {
+      return res.status(404).json({ message: `cannot find ID: ${id}` });
+    }
+    const updatedWorkout = await Workout.findById(id);
+    res
+      .status(200)
+      .json({ original: selectedWorkout, updated: updatedWorkout });
+  } catch (error) {
+    res.status(500).json(error);
   }
-  const foundIndex = workouts.findIndex((workout) => workout.id === parsedId);
-
-  if (foundIndex === -1) {
-    return res.sendStatus(404);
-  }
-
-  workouts[foundIndex] = {
-    id: parsedId,
-    name: req.body.name,
-    muscleGroup: req.body.muscleGroup,
-    workoutType: req.body.workoutType,
-    intensity: req.body.intensity,
-  };
-
-  res.status(200).send("success");
 });
 
-router.patch("/:id", (req, res) => {
-  const parsedId = parseInt(req.params.id);
-  if (isNaN(parsedId)) {
-    return res.sendStatus(400);
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const workout = await Workout.findByIdAndDelete(id);
+    if (!workout) {
+      return res.status(404).json({ message: `Cannot find id: ${id}` });
+    }
+    res.status(200).json(workout);
+  } catch (error) {
+    res.status(500).json(error);
   }
-  const foundIndex = workouts.findIndex((workout) => workout.id === parsedId);
-
-  if (foundIndex === -1) {
-    return res.sendStatus(404);
-  }
-
-  workouts[foundIndex] = {
-    ...workouts[foundIndex],
-    ...req.body,
-  };
-
-  res.status(200).send("OK");
-});
-
-router.delete("/:id", (req, res) => {
-  const parsedId = parseInt(req.params.id);
-  if (isNaN(parsedId)) {
-    return res.sendStatus(400);
-  }
-  const foundIndex = workouts.findIndex((workout) => workout.id === parsedId);
-
-  if (foundIndex === -1) {
-    return res.sendStatus(404);
-  }
-  workouts.splice(foundIndex, 2);
-  res.status(200).send("deleted");
 });
 
 export default router;
