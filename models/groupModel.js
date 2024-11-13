@@ -7,7 +7,7 @@ const groupSchema = mongoose.Schema({
   },
   limit: {
     type: Number,
-    min: [1, "BUANG KABA?"],
+    min: [1, "OOPPPS ANO YAN BOSS"],
     max: [10, "BAWAL YAN BOSS"],
     required: [true],
   },

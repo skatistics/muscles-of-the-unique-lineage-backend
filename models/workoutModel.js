@@ -3,21 +3,21 @@ import mongoose from "mongoose";
 const workoutSchema = mongoose.Schema({
   name: {
     type: String,
-    required: [true, "TANG INA MO PROVIDE MO NAME"],
+    required: [true, "PROVIDE MO NAME"],
   },
   muscleGroup: {
     type: String,
-    required: [true, "TANG INA MO PROVIDE MO MUSCLE GROUP"],
+    required: [true, "PROVIDE MO MUSCLE GROUP"],
   },
   workoutType: {
     type: String,
-    required: [true, "TANG INA MO PROVIDE MO UNG TYPE TANGA KA BA"],
+    required: [true, "PROVIDE MO UNG TYPE "],
   },
   intensity: {
     type: Number,
-    required: [true, "TANG INA MO PROVIDE MO INTENSITY ... TANGA AMP"],
-    min: [1, "TANGA ANG KONTI MASYADO"],
-    max: [5, "TANGINA MO TAAS NAMAN MASYADO BOBO"],
+    required: [true, "PROVIDE MO INTENSITY ... "],
+    min: [1, "ANG KONTI MASYADO"],
+    max: [5, "TAAS NAMAN MASYADO"],
   },
 });
 
