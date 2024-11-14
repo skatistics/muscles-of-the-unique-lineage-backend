@@ -1,9 +1,10 @@
 import { Router } from "express";
 import Workout from "../../models/workoutModel.js";
+import { verifyJWTAdmin, verifyJWT } from "../middleware/verifyJWT.js";
 
 const router = Router();
 
-router.post("/", async (req, res) => {
+router.post("/", verifyJWTAdmin, async (req, res) => {
   try {
     const workout = await Workout.create(req.body);
     res.status(200).json(workout);
@@ -12,7 +13,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", verifyJWT, async (req, res) => {
   try {
     const workoutRes = await Workout.find({});
     res.status(200).json(workoutRes);
@@ -22,7 +23,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
   try {
     const workout = await Workout.findById(id);
@@ -35,7 +36,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyJWTAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     const selectedWorkout = await Workout.findByIdAndUpdate(id, req.body);
@@ -51,7 +52,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyJWTAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     const workout = await Workout.findByIdAndDelete(id);

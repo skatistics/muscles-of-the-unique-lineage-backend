@@ -1,15 +1,19 @@
 import mongoose from "mongoose";
 
 const routineSchema = mongoose.Schema({
+  userId: {
+    type: String,
+    required: [true],
+  },
   name: {
     type: String,
     required: [true],
   },
-  days: {
+  frequency: {
     type: String,
     required: [true],
   },
-  time: {
+  sets: {
     type: String,
     required: [true],
   },
@@ -18,5 +22,9 @@ const routineSchema = mongoose.Schema({
     required: [true],
     min: [1],
     max: [5],
+  },
+  workoutList: {
+    type: String,
+    required: [true],
   },
 });

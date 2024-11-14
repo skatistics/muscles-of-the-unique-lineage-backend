@@ -1,25 +1,41 @@
 import { Router } from "express";
 import User from "../../models/userModel.js";
+import {
+  validateUniqueUser,
+  confirmPassword,
+} from "../middleware/userValidation.js";
+import { verifyJWTAdmin, verifyJWT } from "../middleware/verifyJWT.js";
 
 const router = Router();
 
-router.post("/", async (req, res) => {
-  console.log(req.body);
-  try {
-    const users = await User.create(req.body);
-    res.status(200).json(users);
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json(error);
+router.post(
+  "/register",
+  validateUniqueUser,
+  confirmPassword,
+  async (req, res) => {
+    console.log(req.body);
+    try {
+      const newUser = {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+        role: "user",
+      };
+      const users = await User.create(newUser);
+      res.status(200).json(users);
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json(error);
+    }
   }
-});
+);
 
-router.get("/", async (req, res) => {
+router.get("/", verifyJWTAdmin, async (req, res) => {
   const users = await User.find({});
   res.status(200).json(users);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyJWTAdmin, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -34,7 +50,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
   try {
     const selectedUser = await User.findByIdAndUpdate(id, req.body);
@@ -48,7 +64,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
   try {
     const selectedUser = await User.findByIdAndDelete(id);
