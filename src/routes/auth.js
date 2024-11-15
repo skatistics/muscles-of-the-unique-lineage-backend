@@ -10,10 +10,19 @@ import User from "../../models/userModel.js";
 const router = Router();
 
 router.post("/login", async (req, res) => {
+  let user = null;
+
   try {
-    const user = await User.findOne({
-      email: req.body.email,
-    }).exec();
+    if (req.body.email) {
+      user = await User.findOne({
+        email: req.body.email,
+      }).exec();
+    }
+    if (req.body.username) {
+      user = await User.findOne({
+        username: req.body.username,
+      }).exec();
+    }
 
     if (!user) {
       return res
