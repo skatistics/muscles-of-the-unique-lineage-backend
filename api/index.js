@@ -7,6 +7,8 @@ import membershipRouter from "../src/routes/memberships.js";
 import authRouter from "../src/routes/auth.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { corsOptions } from "../src/config/corsOptions.js";
+import { credentials } from "../src/middleware/credentials.js";
 
 const PORT = process.env.PORT || 3500;
 const DBUSERNAME = process.env.DB_USERNAME;
@@ -19,8 +21,9 @@ const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors());
 app.use(cookieParser());
+app.use(credentials);
+app.use(cors(corsOptions));
 
 app.use("/api/workouts", workoutsRouter);
 app.use("/api/users", authRouter);
