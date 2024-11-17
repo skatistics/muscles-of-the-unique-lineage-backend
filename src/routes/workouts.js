@@ -13,7 +13,7 @@ router.post("/", verifyJWTAdmin, async (req, res) => {
   }
 });
 
-router.get("/", verifyJWT, async (req, res) => {
+router.get("/", verifyJWTAdmin, async (req, res) => {
   try {
     const workoutRes = await Workout.find({});
     res.status(200).json(workoutRes);
