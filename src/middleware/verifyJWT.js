@@ -34,7 +34,7 @@ export function verifyJWTAdmin(req, res, next) {
 
     if (!user) return res.status(401).send({ message: "user not found" });
 
-    if (user.role !== "admin") return res.status(403);
+    if (user.role !== "admin") return res.sendStatus(403);
     req.user = user;
     next();
   });
